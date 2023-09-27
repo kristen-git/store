@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--namespace属性；用于指定当前的映射文件和哪个接口进行映射，需要制定接口的文件路径，
+    需要标注包的完整路径接口
+    resultMap ——自定义映射规则
+    id属性 ——赋予一个唯一的身份
+    type ——取值是一个类
+    将 表的字段 与 类的属性 不一致的字段进行 映射匹配（一样的不用写）
+    id的字段不能省略（主键不可以省略）
+-->
+<mapper namespace="com.cy.store.mapper.UserMapper">
+    <resultMap id="UserEntityMap" type="com.cy.store.entity.User">
+        <id column="uid" property="uid"></id>
+        <result column="is_delete" property="isDelete"/>
+        <result column="created_user" property="createdUser"/>
+        <result column="created_time" property="createdTime"/>
+        <result column="modified_user" property="modifiedUser"/>
+        <result column="modified_time" property="modifiedTime"/>
+    </resultMap>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="uid">
+        insert into t_user (username, password, salt, phone, email, gender, avatar,
+                            is_delete, created_user, created_time, modified_user, modified_time)
+        values (#{username}, #{password}, #{salt}, #{phone}, #{email}, #{gender}, #{avatar},
+                 #{isDelete}, #{createdUser}, #{createdTime}, #{modifiedUser}, #{modifiedTime})
+    </insert>
+
+    <select id="findByUsername" resultMap="UserEntityMap">
+        select * from t_user where username=#{username}
+    </select>
+
+    <update id="changePassword" parameterType="User">
+        update User
+            <set>
+                <if test="password!=null">
+                    password=#{password}
+                </if>
+            </set>
+            where username=${username}
+    </update>
+
+</mapper>
